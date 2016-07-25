@@ -28,7 +28,7 @@ var Cromosoma = function(cr_size, genotype) {
   this.size = cr_size;
   if(genotype)
     this.genotype;
-  this.cost = 9999;
+  this.cost = 9999; //Se crea el objeto con un costo muy grande
 };
 
 //Escoge genes aleatorios para el cromosoma
@@ -60,14 +60,28 @@ var Poblacion = function(pb_size, cr_size) {
 
 //Imprime los cromosomas de la población
 Poblacion.prototype.print = function() {
-  console.log("Vamo' a imprimir");
-  console.log(this.population.size == 4);
   for(var i = 0; i < this.population.length; i++) {
-    console.log(i + ") Iteration");
+    cromosome = '';
+    for(var j = 0; j < this.population[i].size; j++)
+      cromosome += this.population[i].genotype[j];
+    console.log(i + 1 + ") " + cromosome);
   }
 };
 
-// var Solver = function(pb_size, cr_size, )
+var Solver = function(pb_size, cr_size, iterations, crossover_prob, crossover_point, mut_prob) {
+  //Creamos una nueva población
+  var poblacion = new Poblacion(pb_size, cr_size);
+  poblacion.print();
+  
+  //Copiamos los parámetros útiles
+  this.iterations = iterations;
+}
+
+Solver.prototype.evolve = function() {
+  for(var i = 0; i < this.iterations; i++) {
+    console.log("\n\nIteración: " + i);
+  }
+}
 
 function main() {
   console.log("run:");
@@ -89,11 +103,8 @@ function main() {
   console.log("Probabilidad de Mutación: " + mut_prob);
   console.log("Mutación Simple"); //Dependerá de otra variable
   
-  //Creamos una nueva población
-  var poblacion = new Poblacion(pob_size, cromosoma_size);
-  poblacion.print;
-  
-  return poblacion.population;
+  var solver = new Solver(pob_size, cromosoma_size, iterations, crossover_prob, crossover_point, mut_prob);
+  solver.evolve();
 }
 
 main();
