@@ -1,5 +1,7 @@
 //Definiendo el grafo
 //Nodos: (Indice, Nombre)
+var number_of_nodes = 8;
+
 var nodes = [(1, 'C'),
              (2, 'E'),
              (3, 'F'),
@@ -9,7 +11,6 @@ var nodes = [(1, 'C'),
              (7, 'L'),
              (8, 'N')
             ];
-
 
            //  C   E   F   G   H   K   L   N
 var edges = [[ 0, 10, 20,  0, 30, 70, 10, 47],  //C
@@ -21,6 +22,26 @@ var edges = [[ 0, 10, 20,  0, 30, 70, 10, 47],  //C
              [10,  5, 10,  0, 40,  0,  0,  0],  //L
              [47,  0, 30,  0,  0, 60,  0,  0]   //N
             ];
+
+var Cromosoma = function() {
+  this.cost = 9999;
+};
+
+Cromosoma.prototype.random = function(cr_size) {
+  this.genes = [];
+  for(var i = 0; i < cr_size; i++) {
+    this.genes[i] = nodes[Math.floor(Math.random() * number_of_nodes)];    
+  }
+}
+
+var Poblacion = function(pb_size, cr_size) {
+  this.population = [];
+  while(pb_size--) {
+    var cromosome = new Cromosoma();
+    cromosome.random(cr_size);
+    this.population.push(cromosome);
+  }
+};
 
 function main() {
   console.log("run:");
@@ -41,7 +62,9 @@ function main() {
   console.log("Probabilidad de Mutación " + mut_prob);
   console.log("Mutación Simple"); //Dependerá de otra variable
   
-  return edges;
+  var poblacion = new Poblacion(pob_size, cromosoma_size);
+  
+  return poblacion.cromosome;
 }
 
 main();
