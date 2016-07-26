@@ -1,7 +1,7 @@
 //Definiendo el grafo
 //Nodos: (Indice, Nombre)
 var number_of_nodes = 8;
-
+var inf =999999;
 var nodes = [(1, 'C'),
              (2, 'E'),
              (3, 'F'),
@@ -12,15 +12,15 @@ var nodes = [(1, 'C'),
              (8, 'N')
             ];
 
-           //  C   E   F   G   H   K   L   N
-var weights = [[ 0, 10, 20,  0, 30, 70, 10, 47],  //C
-               [10,  0,  0, 40, 60, 10,  5,  0],  //E
-               [20,  0,  0, 55,  0,  0, 10, 30],  //F
-               [ 0, 40, 55,  0, 80, 90,  0,  0],  //G
-               [30, 60,  0, 80,  0, 73, 40,  0],  //H
-               [70, 10,  0, 90, 73,  0,  0, 60],  //K
-               [10,  5, 10,  0, 40,  0,  0,  0],  //L
-               [47,  0, 30,  0,  0, 60,  0,  0]   //N
+	          // C    E    F      G    H     K    L     N
+var weights = [[inf, 10,    20,  inf,  30,   70,  10,   47],  //C
+               [10,   inf,  inf, 40,   60,   10,  5,    inf],  //E
+               [20,   inf,  inf, 55,   inf,  inf, 10,   30],  //F
+               [inf,  40,   55,  inf,  80,   90,  inf,  inf],  //G
+               [30,   60,   inf, 80,   inf,  73,  40,   inf],  //H
+               [70,   10,   inf, 90,   73,   inf, inf,  60],  //K
+               [10,   5,    10,  inf,  40,   inf, 99999,  inf],  //L
+               [47,   inf,  30,  inf,  inf,  60,  inf,  inf]   //N
               ];
 
 //Constructor, inicializa a un costo muy grande
