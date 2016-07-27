@@ -167,21 +167,38 @@ Poblacion.prototype.ruleta = function() {
   var sum_ruleta = 0;
   ruleta_vect = [];
 
-  for(var i=0;i<this.population.length;i++) {
-    sum_ruleta +=this.population[i].cost; //sumamos todos los pesos
+  for(var i=0;i<this.population.length;i++) { 
+    sum_ruleta +=1/this.population[i].cost;  // los pesos son inversamente proporcionales
   }
 
   for(var i=0;i<this.population.length;i++) {
-    ruleta_vect.push(this.population[i].cost * 100 / sum_ruleta); //llenamos sus vec
+    ruleta_vect.push((1/this.population[i].cost * 100) / sum_ruleta); //llenamos sus vec
   }
   
   //Imprime la población y sus valores en la ruleta
-  for(var i = 0; i < this.population.length; i++) {
+for(var i = 0; i < this.population.length; i++) {
     c_gen = '';
+    c_cost= '';
     for(var j = 0; j < this.population[i].size; j++){
       c_gen += this.population[i].genotype[j];
     }
-    console.log(i + 1 + ") " + c_gen+" - " + this.population[i].cost + " -- " + ruleta_vect[i]); 
+    c_cost= this.population[i].cost;
+    console.log(i + 1 + ") " + c_gen+" - "+c_cost+" -- "+ruleta_vect[i]); 
+  }
+//Selecciona de la poblacion segun su probabilidadd
+	a= ruleta_vect[0];
+	b= ruleta_vect[1];
+	c= ruleta_vect[2];
+	d= ruleta_vect[3];	
+
+	for(var a=0;a<this.population.length;a++){
+    var x = Math.floor(Math.random()*100);
+	console.log("ramdom"+x);
+	//determina probabilidad de salir segun el porcentaje que ocupa :)
+	var aleatorio_entero= x<=a ? 0: x>a && x<=a+b? 1 : x>a+b && x<=c ? 2 : 3;  
+	console.log(aleatorio_entero);
+	var r = ruleta_vect[aleatorio_entero];
+    console.log(r);
   }
 }
 
