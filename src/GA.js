@@ -63,6 +63,23 @@ Cromosoma.prototype.random = function() {
   }
 }
 
+//De acuerdo a la probabilidad muta un gen en el cromosoma
+Cromosoma.prototype.mutate = function() {
+  //La mutación
+  var mut_pos = Math.floor(Math.random() * this.genotype.length);
+  this.genotype[mut_pos] = nodes[Math.floor(Math.random() * number_of_nodes)];
+  //Imprimir el genotipo
+  c_gen = '';
+  for(var j = 0; j < this.size; j++)
+    c_gen += this.genotype[j];
+  console.log(c_gen);
+}
+
+//Cruzamiento de dos Cromosomas
+Cromosoma.prototype.crossover = function(parent2) {
+  
+}
+
 //Calcula el costo del cromosoma
 Cromosoma.prototype.getCost = function() {
   var sum = 0;
@@ -70,7 +87,7 @@ Cromosoma.prototype.getCost = function() {
     sum += weights[transform(this.genotype[i-1])][transform(this.genotype[i])];
     //console.log(sum);
   }
-  this.cost=sum;
+  this.cost = sum;
 }
 
 //CLASE POBLACIÓN-------------------------------------------------------------------->
@@ -124,6 +141,7 @@ Poblacion.prototype.ruleta = function() {
     ruleta_vect.push(this.population[i].cost * 100 / sum_ruleta); //llenamos sus vec
   }
   
+  //Imprime la población y sus valores en la ruleta
   for(var i = 0; i < this.population.length; i++) {
     c_gen = '';
     c_cost= '';
@@ -133,19 +151,31 @@ Poblacion.prototype.ruleta = function() {
     c_cost= this.population[i].cost;
     console.log(i + 1 + ") " + c_gen+" - "+c_cost+" -- "+ruleta_vect[i]); 
   }
+  
+  //Seleccionamos a los padres
+  
+}
+
+//Evalúa e imprime el fitness de cada individuo en la población
+Poblacion.prototype.mutate = function(chance) {
+  for(var i = 0; i < this.population.length; i++) {
+    if(Math.random() > chance)
+      return;
+    console.log("Mutó " + i + 1);
+    this.population[i].mutate();
+  }
 }
 
 //Evalúa e imprime el fitness de cada individuo en la población
 Poblacion.prototype.selection = function() {
   console.log("Selección de Siguiente Población");
+  //Imprime toda la población
   for(var i = 0; i < this.population.length; i++) {
     c_gen = '';
-    c_cost = '';
     for(var j = 0; j < this.population[i].size; j++){
       c_gen += this.population[i].genotype[j];
     }
-    c_cost = this.population[i].cost;
-    console.log(i + 1 + ") " + c_gen+" - "+c_cost); 
+    console.log(i + 1 + ") " + c_gen+" - " + this.population[i].cost); 
   }
 }
 
@@ -156,6 +186,7 @@ var Solver = function(pb_size, cr_size, iterations, crossover_prob, crossover_po
   
   //Copiamos los parámetros útiles
   this.iterations = iterations;
+  this.mut_prob = mut_prob;
 };
 
 //Función que realiza las iteraciones para evolucionar nuestro GA
@@ -164,6 +195,7 @@ Solver.prototype.evolve = function() {
     console.log("\n\nIteración: " + i);
     this.poblacion.eval();
     this.poblacion.ruleta();
+    this.poblacion.mutate(this.mut_prob);
     this.poblacion.selection();
   }
 }
@@ -173,9 +205,8 @@ function main() {
   
   //Parámetros de la ejecución
   var pob_size = 4,
-      //cromosoma_size = 5,
-      cromosoma_size = 8,
-      iterations = 3,
+      cromosoma_size = 5,
+      iterations = 2,
       crossover_prob = 0.9,
       crossover_point = 3,
       mut_prob = 0.05;
@@ -187,10 +218,12 @@ function main() {
   console.log("Probabilidad de Cruzamiento: " + crossover_prob);
   console.log("Cruzamiento de un Punto - Punto " + crossover_point);
   console.log("Probabilidad de Mutación: " + mut_prob);
-  console.log("Mutación Simple"); //Dependerá de otra variable
+  console.log("Mutación Simple");
   
   var solver = new Solver(pob_size, cromosoma_size, iterations, crossover_prob, crossover_point, mut_prob);
   solver.evolve();
+  
+  console.log("\n\nFin del Proceso");
 }
 
 main();
