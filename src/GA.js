@@ -209,6 +209,10 @@ Poblacion.prototype.crossover = function(crossover_prob, crossover_point) {
   //Seleccionamos a los padres
   var parent1_indx = Math.floor(Math.random() * this.population.length), //Deben ser seleccionados por la ruleta
       parent2_indx = Math.floor(Math.random() * this.population.length);
+  //Verificar que los dos padres no sean iguales
+  while(parent2_indx == parent1_indx)
+    parent2_indx = Math.floor(Math.random() * this.population.length);
+  
   console.log("Padre: " + (parent1_indx + 1));
   console.log("Madre: " + (parent2_indx + 1));
   
@@ -261,7 +265,7 @@ Poblacion.prototype.selection = function() {
   
   //Ordenamos 
   this.population.sort(function(a, b) {
-    return a.getCost() - b.getCost();
+    return b.getCost() - a.getCost();
   });
   
   //Seleccionamos a los más aptos
@@ -282,7 +286,8 @@ var Solver = function(pb_size, cr_size, iterations, crossover_prob, crossover_po
 
 //Función que realiza las iteraciones para evolucionar nuestro GA
 Solver.prototype.evolve = function() {
-  for(var i = 0; i < this.iterations; i++) {
+  var i = 0;
+  for(i = 0; i < this.iterations; i++) {
     console.log("\n\nIteración: " + i);
     this.poblacion.eval();
     this.poblacion.ruleta();
@@ -292,6 +297,8 @@ Solver.prototype.evolve = function() {
     this.poblacion.mutate(this.mut_prob);
     this.poblacion.selection();
   }
+  console.log("\n\nIteración: " + i);
+  this.poblacion.eval();
 }
 
 function main() {
@@ -299,8 +306,8 @@ function main() {
   
   //Parámetros de la ejecución
   var pob_size = 4,
-      cromosoma_size = 5,
-      iterations = 1,
+      cromosoma_size = 6,
+      iterations = 2,
       crossover_prob = 0.9,
       crossover_point = 3,
       mut_prob = 0.05;
@@ -323,7 +330,3 @@ function main() {
 main();
 
 //node GA.js
-
-/*
-undefined
-*/
