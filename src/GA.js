@@ -193,10 +193,9 @@ for(var i = 0; i < this.population.length; i++) {
 
 	for(var a=0;a<this.population.length;a++){
     var x = Math.floor(Math.random()*100);
-	console.log("ramdom"+x);
+	
 	//determina probabilidad de salir segun el porcentaje que ocupa :)
 	var aleatorio_entero= x<=a ? 0: x>a && x<=a+b? 1 : x>a+b && x<=c ? 2 : 3;  
-	console.log(aleatorio_entero);
 	var r = ruleta_vect[aleatorio_entero];
     console.log(r);
   }
