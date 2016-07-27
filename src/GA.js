@@ -3,14 +3,24 @@ var number_of_nodes = 8;
 var inf=99999
 
 //Nodos: (Indice, Nombre)
-var nodes = [(1, 'C'),
-             (2, 'E'),
-             (3, 'F'),
-             (4, 'G'),
-             (5, 'H'),
-             (6, 'K'),
-             (7, 'L'),
-             (8, 'N')
+// var nodes = [(1, 'C'),
+//              (2, 'E'),
+//              (3, 'F'),
+//              (4, 'G'),
+//              (5, 'H'),
+//              (6, 'K'),
+//              (7, 'L'),
+//              (8, 'N')
+//             ];
+
+var nodes = ['C',
+             'E',
+             'F',
+             'G',
+             'H',
+             'K',
+             'L',
+             'N'
             ];
 
 
@@ -51,7 +61,7 @@ var weights = [[inf,  10,  20, inf,  30,  70,  10,  47],  //C
 var Cromosoma = function(cr_size, genotype) {
   this.size = cr_size;
   if(genotype)
-    this.genotype;
+    this.genotype = genotype;
   this.cost = inf; //Se crea el objeto con un costo muy grande
 };
 
@@ -76,8 +86,31 @@ Cromosoma.prototype.mutate = function() {
 }
 
 //Cruzamiento de dos Cromosomas
-Cromosoma.prototype.crossover = function(parent2) {
+Cromosoma.prototype.crossover = function(parent2, crosspoint) {
+  if(crosspoint > this.genotype.length) { //Si el crosspoint supera al tamaño del genotipo
+    console.log("Not a valid crosspoint");
+    return;
+  }
   
+  //Creamos los genotipos de los hijos
+  var genotype_child1 = [],
+      genotype_child2 = [];
+  for(var i = 0; i < this.genotype.length; i++) {
+    genotype_child1[i] = i < crosspoint ? this.genotype[i] : parent2.genotype[i];
+    genotype_child2[i] = i < crosspoint ? parent2.genotype[i] : this.genotype[i];
+  }
+  
+  //Imprime los genotipos de los hijos
+  var c1_gen = '',
+      c2_gen = '';
+  for(var j = 0; j < this.genotype.length; j++) {
+    c1_gen += genotype_child1[j];
+    c2_gen += genotype_child2[j];
+  }
+  console.log(c1_gen);
+  console.log(c2_gen);
+  
+  return [genotype_child1, genotype_child2];
 }
 
 //Calcula el costo del cromosoma
@@ -88,6 +121,7 @@ Cromosoma.prototype.getCost = function() {
     //console.log(sum);
   }
   this.cost = sum;
+  return this.cost;
 }
 
 //CLASE POBLACIÓN-------------------------------------------------------------------->
@@ -99,7 +133,6 @@ var Poblacion = function(pb_size, cr_size) {
     var cromosome = new Cromosoma(cr_size);
     cromosome.random();
     cromosome.getCost();
-    //console.log(cromosome.genotype);
     //console.log(cromosome.cost);
     this.population.push(cromosome);
   }
@@ -111,6 +144,9 @@ var Poblacion = function(pb_size, cr_size) {
       c_gen += this.population[i].genotype[j];
     console.log(i + 1 + ") " + c_gen); 
   }
+  
+  //Guardamos el tamaño del cromosoma para referencia
+  this.cr_size = cr_size;
 };
 
 //Evalúa e imprime el fitness de cada individuo en la población
@@ -118,17 +154,15 @@ Poblacion.prototype.eval = function() {
   console.log("Evaluando Individuos");
   for(var i = 0; i < this.population.length; i++) {
     c_gen = '';
-    c_cost = '';
     for(var j = 0; j < this.population[i].size; j++){
       c_gen += this.population[i].genotype[j];
     }
-    c_cost = this.population[i].cost;
-    console.log(i + 1 + ") " + c_gen+" - "+c_cost); 
+    console.log(i + 1 + ") " + c_gen + " - " + this.population[i].getCost()); 
   }
 }
 
 //Funcion ruleta
-Poblacion.prototype.ruleta = function() {
+Poblacion.prototype.ruleta = function(crossover_prob, crossover_point) {
   console.log("Selección de Individuos - Método de la Ruleta");
   var sum_ruleta = 0;
   ruleta_vect = [];
@@ -144,24 +178,33 @@ Poblacion.prototype.ruleta = function() {
   //Imprime la población y sus valores en la ruleta
   for(var i = 0; i < this.population.length; i++) {
     c_gen = '';
-    c_cost= '';
     for(var j = 0; j < this.population[i].size; j++){
       c_gen += this.population[i].genotype[j];
     }
-    c_cost= this.population[i].cost;
-    console.log(i + 1 + ") " + c_gen+" - "+c_cost+" -- "+ruleta_vect[i]); 
+    console.log(i + 1 + ") " + c_gen+" - " + this.population[i].cost + " -- " + ruleta_vect[i]); 
   }
   
   //Seleccionamos a los padres
-  
+  var parent1_indx = Math.floor(Math.random() * this.population.length), //Deben ser seleccionados por la ruleta
+      parent2_indx = Math.floor(Math.random() * this.population.length);
+  console.log("Padre: " + (parent1_indx + 1));
+  console.log("Madre: " + (parent2_indx + 1));
+  console.log("Cruzamiento");
+  //Cruzamiento de los padres
+  var children = this.population[parent1_indx].crossover(this.population[parent2_indx], crossover_point),
+      child1 = new Cromosoma(this.cr_size, children[0]),
+      child2 = new Cromosoma(this.cr_size, children[1]);
+  //Insertamos a los hijos a la población
+  this.population.push(child1);
+  this.population.push(child2);
 }
 
-//Evalúa e imprime el fitness de cada individuo en la población
+//Muta a los individuos de acuerdo a la probabilidad de alcanzarlos
 Poblacion.prototype.mutate = function(chance) {
   for(var i = 0; i < this.population.length; i++) {
     if(Math.random() > chance)
       return;
-    console.log("Mutó " + i + 1);
+    console.log("Mutó " + (i + 1));
     this.population[i].mutate();
   }
 }
@@ -175,7 +218,7 @@ Poblacion.prototype.selection = function() {
     for(var j = 0; j < this.population[i].size; j++){
       c_gen += this.population[i].genotype[j];
     }
-    console.log(i + 1 + ") " + c_gen+" - " + this.population[i].cost); 
+    console.log(i + 1 + ") " + c_gen + " - " + this.population[i].getCost()); 
   }
 }
 
@@ -187,6 +230,8 @@ var Solver = function(pb_size, cr_size, iterations, crossover_prob, crossover_po
   //Copiamos los parámetros útiles
   this.iterations = iterations;
   this.mut_prob = mut_prob;
+  this.crossover_prob = crossover_prob;
+  this.crossover_point = crossover_point;
 };
 
 //Función que realiza las iteraciones para evolucionar nuestro GA
@@ -194,7 +239,7 @@ Solver.prototype.evolve = function() {
   for(var i = 0; i < this.iterations; i++) {
     console.log("\n\nIteración: " + i);
     this.poblacion.eval();
-    this.poblacion.ruleta();
+    this.poblacion.ruleta(this.crossover_prob, this.crossover_point);
     this.poblacion.mutate(this.mut_prob);
     this.poblacion.selection();
   }
@@ -206,7 +251,7 @@ function main() {
   //Parámetros de la ejecución
   var pob_size = 4,
       cromosoma_size = 5,
-      iterations = 2,
+      iterations = 1,
       crossover_prob = 0.9,
       crossover_point = 3,
       mut_prob = 0.05;
