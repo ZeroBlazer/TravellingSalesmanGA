@@ -189,11 +189,22 @@ Poblacion.prototype.ruleta = function(crossover_prob, crossover_point) {
       parent2_indx = Math.floor(Math.random() * this.population.length);
   console.log("Padre: " + (parent1_indx + 1));
   console.log("Madre: " + (parent2_indx + 1));
-  console.log("Cruzamiento");
-  //Cruzamiento de los padres
-  var children = this.population[parent1_indx].crossover(this.population[parent2_indx], crossover_point),
-      child1 = new Cromosoma(this.cr_size, children[0]),
-      child2 = new Cromosoma(this.cr_size, children[1]);
+  
+  var child1,
+      child2;
+  if(Math.random() < crossover_prob) {
+    console.log("Cruzamiento");
+    //Cruzamiento de los padres
+    var children = this.population[parent1_indx].crossover(this.population[parent2_indx], crossover_point),
+    child1 = new Cromosoma(this.cr_size, children[0]),
+    child2 = new Cromosoma(this.cr_size, children[1]);
+  }
+  else {
+    console.log("Sin cruzamiento");
+    child1 = new Cromosoma(this.cr_size, this.population[parent1_indx].genotype),
+    child2 = new Cromosoma(this.cr_size, this.population[parent2_indx].genotype);
+  }
+  
   //Insertamos a los hijos a la población
   this.population.push(child1);
   this.population.push(child2);
