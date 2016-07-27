@@ -198,6 +198,8 @@ for(var i = 0; i < this.population.length; i++) {
 	var aleatorio_entero= x<=a ? 0: x>a && x<=a+b? 1 : x>a+b && x<=c ? 2 : 3;  
 	var r = ruleta_vect[aleatorio_entero];
     console.log(r);
+	this.population[a]=this.population[aleatorio_entero];	//seteamos para nueva poblacion
+	//console.log(this.population[i]);
   }
 }
 
