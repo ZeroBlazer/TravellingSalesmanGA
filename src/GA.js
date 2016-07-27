@@ -86,23 +86,33 @@ var Poblacion = function(pb_size, cr_size) {
     //console.log(cromosome.cost);
     this.population.push(cromosome);
   }
-};
-
-//Imprime los cromosomas de la población
-Poblacion.prototype.print = function() {
+  
+  //Imprime los cromosomas de la población inicial
   for(var i = 0; i < this.population.length; i++) {
     c_gen = '';
-    c_cost= '';
+    for(var j = 0; j < this.population[i].size; j++)
+      c_gen += this.population[i].genotype[j];
+    console.log(i + 1 + ") " + c_gen); 
+  }
+};
+
+//Evalúa e imprime el fitness de cada individuo en la población
+Poblacion.prototype.eval = function() {
+  console.log("Evaluando Individuos");
+  for(var i = 0; i < this.population.length; i++) {
+    c_gen = '';
+    c_cost = '';
     for(var j = 0; j < this.population[i].size; j++){
       c_gen += this.population[i].genotype[j];
     }
-    c_cost= this.population[i].cost;
-    console.log(i + 1 + ") " + c_gen+" = "+c_cost); 
-  }  
+    c_cost = this.population[i].cost;
+    console.log(i + 1 + ") " + c_gen+" - "+c_cost); 
+  }
 }
 
 //Funcion ruleta
 Poblacion.prototype.ruleta = function() {
+  console.log("Selección de Individuos - Método de la Ruleta");
   var sum_ruleta = 0;
   ruleta_vect = [];
 
@@ -121,24 +131,40 @@ Poblacion.prototype.ruleta = function() {
       c_gen += this.population[i].genotype[j];
     }
     c_cost= this.population[i].cost;
-    console.log(i + 1 + ") " + c_gen+" = "+c_cost+" -- "+ruleta_vect[i]); 
+    console.log(i + 1 + ") " + c_gen+" - "+c_cost+" -- "+ruleta_vect[i]); 
   }
 }
 
-//La clase que hará evolucionar nuestro algoritmo genético -------------------------------------->
+//Evalúa e imprime el fitness de cada individuo en la población
+Poblacion.prototype.selection = function() {
+  console.log("Selección de Siguiente Población");
+  for(var i = 0; i < this.population.length; i++) {
+    c_gen = '';
+    c_cost = '';
+    for(var j = 0; j < this.population[i].size; j++){
+      c_gen += this.population[i].genotype[j];
+    }
+    c_cost = this.population[i].cost;
+    console.log(i + 1 + ") " + c_gen+" - "+c_cost); 
+  }
+}
+
+//CLASE SOLVER que hará evolucionar nuestro algoritmo genético -------------------------------------->
 var Solver = function(pb_size, cr_size, iterations, crossover_prob, crossover_point, mut_prob) {
   //Creamos una nueva población
-  var poblacion = new Poblacion(pb_size, cr_size);
-  poblacion.print();
-  poblacion.ruleta();
+  this.poblacion = new Poblacion(pb_size, cr_size);
   
   //Copiamos los parámetros útiles
   this.iterations = iterations;
 };
 
+//Función que realiza las iteraciones para evolucionar nuestro GA
 Solver.prototype.evolve = function() {
   for(var i = 0; i < this.iterations; i++) {
     console.log("\n\nIteración: " + i);
+    this.poblacion.eval();
+    this.poblacion.ruleta();
+    this.poblacion.selection();
   }
 }
 
@@ -149,7 +175,7 @@ function main() {
   var pob_size = 4,
       //cromosoma_size = 5,
       cromosoma_size = 8,
-      iterations = 30,
+      iterations = 3,
       crossover_prob = 0.9,
       crossover_point = 3,
       mut_prob = 0.05;
@@ -164,8 +190,7 @@ function main() {
   console.log("Mutación Simple"); //Dependerá de otra variable
   
   var solver = new Solver(pob_size, cromosoma_size, iterations, crossover_prob, crossover_point, mut_prob);
-  //solver.evolve();
-  
+  solver.evolve();
 }
 
 main();
