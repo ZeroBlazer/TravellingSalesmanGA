@@ -162,7 +162,7 @@ Poblacion.prototype.eval = function() {
 }
 
 //Funcion ruleta
-Poblacion.prototype.ruleta = function(crossover_prob, crossover_point) {
+Poblacion.prototype.ruleta = function() {
   console.log("Selección de Individuos - Método de la Ruleta");
   var sum_ruleta = 0;
   ruleta_vect = [];
@@ -183,7 +183,10 @@ Poblacion.prototype.ruleta = function(crossover_prob, crossover_point) {
     }
     console.log(i + 1 + ") " + c_gen+" - " + this.population[i].cost + " -- " + ruleta_vect[i]); 
   }
-  
+}
+
+//Hace el crossover de los individuos
+Poblacion.prototype.crossover = function(crossover_prob, crossover_point) {
   //Seleccionamos a los padres
   var parent1_indx = Math.floor(Math.random() * this.population.length), //Deben ser seleccionados por la ruleta
       parent2_indx = Math.floor(Math.random() * this.population.length);
@@ -250,7 +253,10 @@ Solver.prototype.evolve = function() {
   for(var i = 0; i < this.iterations; i++) {
     console.log("\n\nIteración: " + i);
     this.poblacion.eval();
-    this.poblacion.ruleta(this.crossover_prob, this.crossover_point);
+    this.poblacion.ruleta();
+    this.poblacion.crossover(this.crossover_prob, this.crossover_point);
+    this.poblacion.mutate(this.mut_prob);
+    this.poblacion.crossover(this.crossover_prob, this.crossover_point);
     this.poblacion.mutate(this.mut_prob);
     this.poblacion.selection();
   }
