@@ -1,5 +1,4 @@
-//Definiendo el grafo
-
+//Variables útiles
 var number_of_nodes = 8;
 var inf=99999
 
@@ -35,7 +34,8 @@ function transform(letra){
 
 }
 
-              //  C   E   F   G   H   K   L   N
+//                                      Pesos del grafo
+//                C    E    F    G    H    K    L    N
 var weights = [[inf,  10,  20, inf,  30,  70,  10,  47],  //C
                [ 10, inf, inf,  40,  60,  10,   5, inf],  //E
                [ 20, inf, inf,  55, inf, inf,  10,  30],  //F
@@ -46,12 +46,13 @@ var weights = [[inf,  10,  20, inf,  30,  70,  10,  47],  //C
                [ 47, inf,  30, inf, inf,  60, inf, inf]   //N
               ];
 
+//CLASE CROMOSOMA-------------------------------------------------------------------->
 //Constructor, inicializa a un costo muy grande
 var Cromosoma = function(cr_size, genotype) {
   this.size = cr_size;
   if(genotype)
     this.genotype;
-  this.cost = 9999; //Se crea el objeto con un costo muy grande
+  this.cost = inf; //Se crea el objeto con un costo muy grande
 };
 
 //Escoge genes aleatorios para el cromosoma
@@ -72,6 +73,7 @@ Cromosoma.prototype.getCost = function() {
   this.cost=sum;
 }
 
+//CLASE POBLACIÓN-------------------------------------------------------------------->
 var Poblacion = function(pb_size, cr_size) {
   //Crea una población Random
   console.log("\nGenerando Población inicial");
@@ -96,23 +98,22 @@ Poblacion.prototype.print = function() {
     }
     c_cost= this.population[i].cost;
     console.log(i + 1 + ") " + c_gen+" = "+c_cost); 
-  }
-  
+  }  
 }
 
-
 //Funcion ruleta
-Poblacion.prototype.ruleta = function(){
+Poblacion.prototype.ruleta = function() {
   var sum_ruleta = 0;
   ruleta_vect = [];
 
-    for(var i=0;i<this.population.length;i++){
+  for(var i=0;i<this.population.length;i++) {
     sum_ruleta +=this.population[i].cost; //sumamos todos los pesos
   }
 
-  for(var i=0;i<this.population.length;i++){
-    ruleta_vect.push(this.population[i].cost*100/sum_ruleta); //llenamos sus vec
-}
+  for(var i=0;i<this.population.length;i++) {
+    ruleta_vect.push(this.population[i].cost * 100 / sum_ruleta); //llenamos sus vec
+  }
+  
   for(var i = 0; i < this.population.length; i++) {
     c_gen = '';
     c_cost= '';
@@ -122,14 +123,9 @@ Poblacion.prototype.ruleta = function(){
     c_cost= this.population[i].cost;
     console.log(i + 1 + ") " + c_gen+" = "+c_cost+" -- "+ruleta_vect[i]); 
   }
-
-
 }
 
-
-
-
-
+//La clase que hará evolucionar nuestro algoritmo genético -------------------------------------->
 var Solver = function(pb_size, cr_size, iterations, crossover_prob, crossover_point, mut_prob) {
   //Creamos una nueva población
   var poblacion = new Poblacion(pb_size, cr_size);
@@ -147,7 +143,7 @@ Solver.prototype.evolve = function() {
 }
 
 function main() {
-  console.log("run:");
+  console.log("\nrun:");
   
   //Parámetros de la ejecución
   var pob_size = 4,
